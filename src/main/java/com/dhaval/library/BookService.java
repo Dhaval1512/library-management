@@ -19,7 +19,7 @@ public class BookService {
 
     public Book findById(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+                .orElseThrow(() -> new BookNotFoundException(id));
     }
 
     public Book save(Book book) {
@@ -37,7 +37,7 @@ public class BookService {
 
     public void deleteById(Long id) {
         if (!bookRepository.existsById(id)) {
-            throw new RuntimeException("Book not found with id: " + id);
+            throw new BookNotFoundException(id);
         }
         bookRepository.deleteById(id);
     }
