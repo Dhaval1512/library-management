@@ -13,26 +13,35 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> findAll() {
-        return bookRepository.findAll();
+    public List<BookResponse> findAll() {
+        return bookRepository.findAll()
+                .stream()
+                .map(BookResponse::fromEntity)
+                .toList();
     }
 
-    public Book findById(Long id) {
-        return bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+    public BookResponse findById(Long id) {
+        return BookResponse.fromEntity(findEntityById(id));
     }
 
-    public Book save(Book book) {
-        return bookRepository.save(book);
+    public BookResponse save(BookRequest request) {
+        Book book = new Book();
+        book.setTitle(request.title());
+        book.setAuthor(request.author());
+        book.setIsbn(request.isbn());
+        book.setAvailable(request.available());
+        Book saved = bookRepository.save(book);
+        return BookResponse.fromEntity(saved);
     }
 
-    public Book update(Long id, Book updatedBook) {
-        Book existing = findById(id);
-        existing.setTitle(updatedBook.getTitle());
-        existing.setAuthor(updatedBook.getAuthor());
-        existing.setIsbn(updatedBook.getIsbn());
-        existing.setAvailable(updatedBook.isAvailable());
-        return bookRepository.save(existing);
+    public BookResponse update(Long id, BookRequest request) {
+        Book existing = findEntityById(id);
+        existing.setTitle(request.title());
+        existing.setAuthor(request.author());
+        existing.setIsbn(request.isbn());
+        existing.setAvailable(request.available());
+        Book updated = bookRepository.save(existing);
+        return BookResponse.fromEntity(updated);
     }
 
     public void deleteById(Long id) {
@@ -40,5 +49,10 @@ public class BookService {
             throw new BookNotFoundException(id);
         }
         bookRepository.deleteById(id);
+    }
+
+    private Book findEntityById(Long id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
     }
 }

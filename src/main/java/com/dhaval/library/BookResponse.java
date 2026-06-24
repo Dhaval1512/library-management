@@ -1,0 +1,19 @@
+package com.dhaval.library;
+
+public record BookResponse(
+    Long id,
+    String title,
+    String author,
+    String isbn,
+    boolean available
+) {
+    public static BookResponse fromEntity(Book book) {
+        return new BookResponse(
+            book.getId(),
+            book.getTitle(),
+            book.getAuthor(),
+            book.getIsbn(),
+            book.isAvailable()
+        );
+    }
+}

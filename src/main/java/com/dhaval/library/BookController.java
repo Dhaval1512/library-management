@@ -2,7 +2,6 @@ package com.dhaval.library;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/books")
@@ -25,25 +26,24 @@ public class BookController {
     }
 
     @GetMapping
-    public List<Book> getAllBooks() {
+    public List<BookResponse> getAllBooks() {
         return bookService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Book getBookById(@PathVariable Long id) {
+    public BookResponse getBookById(@PathVariable Long id) {
         return bookService.findById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Book> createBook(@Valid @RequestBody Book book) {
-        Book saved = bookService.save(book);
+    public ResponseEntity<BookResponse> createBook(@Valid @RequestBody BookRequest request) {
+        BookResponse saved = bookService.save(request);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @Valid @RequestBody Book book) {
-        Book updated = bookService.update(id, book);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+    public BookResponse updateBook(@PathVariable Long id, @Valid @RequestBody BookRequest request) {
+        return bookService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
